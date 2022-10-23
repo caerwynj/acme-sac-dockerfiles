@@ -18,7 +18,7 @@ RUN cd sys \
 	&&  ./makemk.sh \
 	&& mk clean \
 	&& mk install \
-	mk clean
+	&& mk clean
 
 EXPOSE 8080
 ENTRYPOINT ["emu"]
