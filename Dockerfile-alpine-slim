@@ -1,0 +1,50 @@
+FROM arm32v7/alpine:3.16 AS build
+
+RUN apk add build-base libx11-dev libxext-dev linux-headers -t build
+
+ENV INFERNO=/usr/acme-sac
+ENV objtype=arm
+WORKDIR $INFERNO
+
+COPY  . $INFERNO
+
+ENV PATH="$INFERNO/sys/Linux/${objtype}/bin:${PATH}"
+RUN cd sys \
+	&&  ./makemk.sh \
+	&& mk clean \
+	&& mk install \
+	&& mk clean
+
+FROM arm32v7/alpine:3.16
+
+RUN apk add libx11 libxext
+
+RUN addgroup -S inferno
+RUN adduser --disabled-password --ingroup inferno inferno
+USER inferno
+
+ENV INFERNO=/usr/acme-sac
+ENV objtype=arm
+WORKDIR $INFERNO
+
+COPY --chown=inferno  acme acme
+COPY --chown=inferno  appl appl
+COPY --chown=inferno  dis dis
+COPY --chown=inferno  fonts fonts
+COPY --chown=inferno  lib lib 
+COPY --chown=inferno  locale locale
+COPY --chown=inferno  man man
+COPY --chown=inferno  mnt mnt
+COPY --chown=inferno  module module
+COPY --chown=inferno  n n
+COPY --chown=inferno  services services
+COPY --chown=inferno  tmp tmp
+COPY --chown=inferno  usr/inferno usr/inferno
+COPY --chown=inferno  --from=build /usr/acme-sac/sys/Linux/${objtype}/bin sys/Linux/${objtype}/bin
+COPY --chown=inferno LICENCE NOTICE README.md ./
+
+ENV PATH="$INFERNO/sys/Linux/${objtype}/bin:${PATH}"
+
+EXPOSE 8080
+ENTRYPOINT ["emu"]
+CMD ["-r", "/usr/acme-sac"]
