@@ -1,17 +1,16 @@
-FROM i386/alpine:3.16
+FROM arm32v7/alpine:3.16 AS build
 
 RUN apk add build-base libx11-dev libxext-dev linux-headers -t build
-#RUN apk add libx11 libxext
 
 RUN addgroup -S inferno
 RUN adduser --disabled-password --ingroup inferno inferno
 USER inferno
 
 ENV INFERNO=/usr/acme-sac
-ENV objtype=386
+ENV objtype=arm
 WORKDIR $INFERNO
 
-COPY --chown=inferno . $INFERNO
+COPY  . $INFERNO
 
 ENV PATH="$INFERNO/Linux/${objtype}/bin:${PATH}"
 RUN ./makemk.sh \

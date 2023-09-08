@@ -8,9 +8,8 @@ WORKDIR $INFERNO
 
 COPY  . $INFERNO
 
-ENV PATH="$INFERNO/sys/Linux/${objtype}/bin:${PATH}"
-RUN cd sys \
-	&&  ./makemk.sh \
+ENV PATH="$INFERNO/Linux/${objtype}/bin:${PATH}"
+RUN ./makemk.sh \
 	&& mk clean \
 	&& mk install \
 	&& mk clean
@@ -34,16 +33,17 @@ COPY --chown=inferno  fonts fonts
 COPY --chown=inferno  lib lib 
 COPY --chown=inferno  locale locale
 COPY --chown=inferno  man man
+COPY --chown=inferno  mkfiles mkfiles
 COPY --chown=inferno  mnt mnt
 COPY --chown=inferno  module module
 COPY --chown=inferno  n n
 COPY --chown=inferno  services services
 COPY --chown=inferno  tmp tmp
 COPY --chown=inferno  usr/inferno usr/inferno
-COPY --chown=inferno  --from=build /usr/acme-sac/sys/Linux/${objtype}/bin sys/Linux/${objtype}/bin
-COPY --chown=inferno LICENCE NOTICE README.md ./
+COPY --chown=inferno  --from=build /usr/acme-sac/Linux/${objtype}/bin Linux/${objtype}/bin
+COPY --chown=inferno LICENCE NOTICE README.md mkconfig ./
 
-ENV PATH="$INFERNO/sys/Linux/${objtype}/bin:${PATH}"
+ENV PATH="$INFERNO/Linux/${objtype}/bin:${PATH}"
 
 EXPOSE 8080
 ENTRYPOINT ["emu"]

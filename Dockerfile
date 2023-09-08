@@ -13,9 +13,8 @@ WORKDIR $INFERNO
 
 COPY --chown=inferno . $INFERNO
 
-ENV PATH="$INFERNO/sys/Linux/${objtype}/bin:${PATH}"
-RUN cd sys \
-	&&  ./makemk.sh \
+ENV PATH="$INFERNO/Linux/${objtype}/bin:${PATH}"
+RUN ./makemk.sh \
 	&& mk clean \
 	&& mk install \
 	&& mk clean
