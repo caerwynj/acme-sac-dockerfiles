@@ -9,9 +9,19 @@ USER inferno
 
 ENV INFERNO=/usr/acme-sac
 ENV objtype=386
-WORKDIR $INFERNO
 
+WORKDIR $INFERNO
 COPY --chown=inferno . $INFERNO
+
+# setup a custom mkconfig
+RUN echo > mkconfig ROOT=$INFERNO  \
+    && echo >>mkconfig TKSTYLE=std \
+    && echo >>mkconfig SYSHOST=Linux  \
+    && echo >>mkconfig SYSTARG=Linux  \
+    && echo >>mkconfig OBJTYPE=${objtype}    \
+    && echo >>mkconfig 'OBJDIR=$SYSTARG/$OBJTYPE'  \
+    && echo >>mkconfig '<$ROOT/mkfiles/mkhost-$SYSHOST' \
+    && echo >>mkconfig '<$ROOT/mkfiles/mkfile-$SYSTARG-$OBJTYPE' 
 
 ENV PATH="$INFERNO/Linux/${objtype}/bin:${PATH}"
 RUN ./makemk.sh \
